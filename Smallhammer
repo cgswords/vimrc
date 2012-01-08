@@ -1,0 +1,5 @@
+:map <F2> d%
+:map <F3> y%
+:map <F4> d%/(<Enter>%p
+:map <F5> !%petite<Enter>
+:map <F6> gg!Gpetite<Enter>
