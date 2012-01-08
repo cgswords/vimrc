@@ -1,0 +1,2 @@
+echo $*
+echo $* | petite | sed 's/Petite .*$//' | sed 's/Copyright .*//' | sed -r 's/> (.*)/\1/' | sed '/^$/d' | xargs echo ";;"
