@@ -1,0 +1,167 @@
+diff -rupN orig/vim73/src/misc1.c new/vim73/src/misc1.c
+--- orig/vim73/src/misc1.c	2010-08-15 07:24:05.000000000 -0400
++++ new/vim73/src/misc1.c	2012-02-27 14:23:48.000000000 -0500
+@@ -8194,15 +8194,21 @@ lisp_match(p)
+     char_u	buf[LSIZE];
+     int		len;
+     char_u	*word = p_lispwords;
++    int flipsense = 0;
++
++    if (*word == '!') {
++        flipsense = 1;
++        word += 1;
++    }
+ 
+     while (*word != NUL)
+     {
+ 	(void)copy_option_part(&word, buf, LSIZE, ",");
+ 	len = (int)STRLEN(buf);
+ 	if (STRNCMP(buf, p, len) == 0 && p[len] == ' ')
+-	    return TRUE;
++	    return flipsense ? FALSE : TRUE;
+     }
+-    return FALSE;
++    return flipsense ? TRUE : FALSE;
+ }
+ 
+ /*
+@@ -8226,7 +8232,7 @@ get_lisp_indent()
+ {
+     pos_T	*pos, realpos, paren;
+     int		amount;
+-    char_u	*that;
++    char_u	*firstthat, *that;
+     colnr_T	col;
+     colnr_T	firsttry;
+     int		parencount, quotecount;
+@@ -8258,9 +8264,9 @@ get_lisp_indent()
+ 	{
+ 	    if (linewhite(curwin->w_cursor.lnum))
+ 		continue;
+-	    for (that = ml_get_curline(); *that != NUL; ++that)
++	    for (firstthat = that = ml_get_curline(); *that != NUL; ++that)
+ 	    {
+-		if (*that == ';')
++		if (*that == ';' && (that == firstthat || *(that-1) != '#'))
+ 		{
+ 		    while (*(that + 1) != NUL)
+ 			++that;
+diff -rupN orig/vim73/src/normal.c new/vim73/src/normal.c
+--- orig/vim73/src/normal.c	2010-07-31 09:25:19.000000000 -0400
++++ new/vim73/src/normal.c	2012-02-27 14:23:48.000000000 -0500
+@@ -1213,7 +1213,7 @@ getcount:
+     /*
+      * If an operation is pending, handle it...
+      */
+-    do_pending_operator(&ca, old_col, FALSE);
++    do_pending_operator(&ca, old_col, FALSE, old_pos);
+ 
+     /*
+      * Wait for a moment when a message is displayed that will be overwritten
+@@ -1390,10 +1390,11 @@ normal_end:
+  * Handle an operator after visual mode or when the movement is finished
+  */
+     void
+-do_pending_operator(cap, old_col, gui_yank)
++do_pending_operator(cap, old_col, gui_yank, old_pos)
+     cmdarg_T	*cap;
+     int		old_col;
+     int		gui_yank;
++    pos_T       old_pos;
+ {
+     oparg_T	*oap = cap->oap;
+     pos_T	old_cursor;
+@@ -1936,8 +1937,10 @@ do_pending_operator(cap, old_col, gui_ya
+ 		if (!gui_yank)
+ 		    vim_beep();
+ 	    }
+-	    else
++	    else {
+ 		(void)op_yank(oap, FALSE, !gui_yank);
++                if (p_ylc) curwin->w_cursor = old_pos;
++            }
+ 	    check_cursor_col();
+ 	    break;
+ 
+@@ -9225,6 +9228,7 @@ nv_put(cap)
+ #endif
+     int		dir;
+     int		flags = 0;
++    pos_T       old_pos = curwin->w_cursor;		/* remember where cursor was */
+ 
+     if (cap->oap->op_type != OP_NOP)
+     {
+@@ -9278,7 +9282,7 @@ nv_put(cap)
+ 	    cap->nchar = NUL;
+ 	    cap->oap->regname = NUL;
+ 	    nv_operator(cap);
+-	    do_pending_operator(cap, 0, FALSE);
++	    do_pending_operator(cap, 0, FALSE, old_pos);
+ 	    empty = (curbuf->b_ml.ml_flags & ML_EMPTY);
+ 
+ 	    /* delete PUT_LINE_BACKWARD; */
+diff -rupN orig/vim73/src/ops.c new/vim73/src/ops.c
+--- orig/vim73/src/ops.c	2010-08-01 08:16:08.000000000 -0400
++++ new/vim73/src/ops.c	2012-02-27 14:23:48.000000000 -0500
+@@ -5689,7 +5689,7 @@ clip_get_selection(cbd)
+ 	ca.cmdchar = 'y';
+ 	ca.count1 = 1;
+ 	ca.retval = CA_NO_ADJ_OP_END;
+-	do_pending_operator(&ca, 0, TRUE);
++	do_pending_operator(&ca, 0, TRUE, old_op_start);
+ 	y_previous = old_y_previous;
+ 	y_current = old_y_current;
+ 	curwin->w_cursor = old_cursor;
+diff -rupN orig/vim73/src/option.c new/vim73/src/option.c
+--- orig/vim73/src/option.c	2010-08-04 14:49:18.000000000 -0400
++++ new/vim73/src/option.c	2012-02-27 14:23:48.000000000 -0500
+@@ -2851,6 +2851,10 @@ static struct vimoption
+ 			    (char_u *)&p_wd, PV_NONE,
+ 			    {(char_u *)0L, (char_u *)0L} SCRIPTID_INIT},
+ 
++    {"yankleavecursor",  NULL,   P_NUM|P_VI_DEF,
++			    (char_u *)&p_ylc, PV_NONE,
++			    {(char_u *)FALSE, (char_u *)0L} SCRIPTID_INIT},
++
+ /* terminal output codes */
+ #define p_term(sss, vvv)   {sss, NULL, P_STRING|P_VI_DEF|P_RALL|P_SECURE, \
+ 			    (char_u *)&vvv, PV_NONE, \
+diff -rupN orig/vim73/src/option.h new/vim73/src/option.h
+--- orig/vim73/src/option.h	2010-07-25 10:15:02.000000000 -0400
++++ new/vim73/src/option.h	2012-02-27 14:23:48.000000000 -0500
+@@ -889,6 +889,7 @@ EXTERN int	p_write;	/* 'write' */
+ EXTERN int	p_wa;		/* 'writeany' */
+ EXTERN int	p_wb;		/* 'writebackup' */
+ EXTERN long	p_wd;		/* 'writedelay' */
++EXTERN long	p_ylc;		/* 'yankleavecursor' */
+ 
+ /*
+  * "indir" values for buffer-local opions.
+diff -rupN orig/vim73/src/proto/normal.pro new/vim73/src/proto/normal.pro
+--- orig/vim73/src/proto/normal.pro	2010-08-15 08:30:45.000000000 -0400
++++ new/vim73/src/proto/normal.pro	2012-02-27 14:24:13.000000000 -0500
+@@ -1,7 +1,7 @@
+ /* normal.c */
+ void init_normal_cmds __ARGS((void));
+ void normal_cmd __ARGS((oparg_T *oap, int toplevel));
+-void do_pending_operator __ARGS((cmdarg_T *cap, int old_col, int gui_yank));
++void do_pending_operator __ARGS((cmdarg_T *cap, int old_col, int gui_yank, pos_T old_pos));
+ int do_mouse __ARGS((oparg_T *oap, int c, int dir, long count, int fixindent));
+ void check_visual_highlight __ARGS((void));
+ void end_visual_mode __ARGS((void));
+diff -rupN orig/vim73/src/search.c new/vim73/src/search.c
+--- orig/vim73/src/search.c	2010-07-14 10:49:41.000000000 -0400
++++ new/vim73/src/search.c	2012-02-27 14:23:48.000000000 -0500
+@@ -2402,8 +2402,10 @@ check_linecomment(line)
+ 				      && *(p - 1) != '\\' && *(p - 2) != '#'))
+ 			instr = TRUE;
+ 		}
+-		else if (!instr && ((p - line) < 2
+-				    || (*(p - 1) != '\\' && *(p - 2) != '#')))
++                else if (!instr
++                         && ((p - line) < 1 || *(p - 1) != '#')
++                         && ((p - line) < 2
++                             || (*(p - 1) != '\\' && *(p - 2) != '#')))
+ 		    break;	/* found! */
+ 		++p;
+ 	    }
