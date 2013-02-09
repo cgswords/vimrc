@@ -52,7 +52,10 @@
 | INSTALLATION                                                                |
 +-----------------------------------------------------------------------------+
 
-// TODO \\
+  You want to move colors and syntax into ~/.vim/
+
+  .vimrc is an rc for you to consider using. It may be worth reading through
+  because most of it is well-documented.
 
 +-----------------------------------------------------------------------------+
 | USAGE                                                                       |
