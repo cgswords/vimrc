@@ -5,6 +5,9 @@ set tabstop=2
 set expandtab
 set shiftwidth=2
 
+" For CSApprox
+set t_Co=256
+
 " These are mostly personal preference. They make my life easier writing Scheme.
 " showmatch shows matching brackets on hover
 " nocompatible disables vi compatibility mode; who uses that?!
