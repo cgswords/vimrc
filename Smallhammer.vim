@@ -5,9 +5,6 @@ set tabstop=2
 set expandtab
 set shiftwidth=2
 
-" For CSApprox
-set t_Co=256
-
 " These are mostly personal preference. They make my life easier writing Scheme.
 " showmatch shows matching brackets on hover
 " nocompatible disables vi compatibility mode; who uses that?!
@@ -21,28 +18,38 @@ set nocompatible
 set noincsearch
 set formatoptions=cql
 set hidden
-set ruler
+""set ruler
+set textwidth=80
 
 " Special case tabexpand for Makefiles
 autocmd FileType make set noexpandtab
 
 " Turning on auto-indent, which we don't need with hacked vim
-" set smartindent
-" set autoindent
+set smartindent
+set autoindent
 
+" For CSApprox
 set t_Co=256
 " You need CSApprox for these to work without gvim
 " ir_black is preferred by Andy Keep
 " darkbone is preferred by Cam Swords
+" jellybeans was suggested by Jaime Guerrero
+" hemisu-light and github2 are both good for black-on-white presenting
 "colorscheme ir_black
 "colorscheme darkbone 
-colorscheme desert
+colorscheme jellybeans
+"colorscheme hemisu-light
+"colorscheme github2 
 syntax on
-
+filetype on
+""filetype plugin indent on
 
 " Some useful keymappings
 " S to grap an S-expression without having to hit shift for a %
 :map S %
 " ^X^V<char> to insert special <char> (insert mode)
 inoremap <c-x><c-v> <c-v>
+
+noremap <C-j> <C-e>
+noremap <C-k> <C-y>
 
