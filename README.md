@@ -1,8 +1,8 @@
-# SMALLHAMMER
+# VIM CONFIGURATION
 
 *(By Cameron Swords, with select contributions from Andy Keep and Jaime Guerrero)*
 
-**Smallhammer** is a set of vim bindings for developing Scheme code for 
+This vimrc is a set of vim bindings for developing Scheme code for 
 [Petite Chez Scheme](http://www.scheme.com/petitechezscheme.html) and
 [Racket](http://racket-lang.org/),
 along with syntax plugins for BBCode (.bbc), Idris, Markdown (.md), and Ott
@@ -10,7 +10,7 @@ along with syntax plugins for BBCode (.bbc), Idris, Markdown (.md), and Ott
 
 # Installation
 
-**Smallhammer.vim** is a `.vimrc` for you to consider using. Attempst have been made to
+**rc.vim** is a `.vimrc` for you to consider using. Attempst have been made to
 document each line, and may be worth reading through. To install it, move it to `~/.vimrc`
 
 You probably want to move `dot_vim`'s folders into into `~/.vim/`
@@ -57,7 +57,7 @@ liability, or tort (including negligence or otherwise) arising in any way
 out of the use of this software, even if advised of the possibility of
 such damage.*
 
-Smallhammer is in no way  affiliated with Cadence Research Systems or Racket and
+This Vim RC is in no way  affiliated with Cadence Research Systems or Racket and
 is developed independently.
 
 
