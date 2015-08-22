@@ -12,7 +12,7 @@ expanded it a bit more.
 First, you'll need to install [pathogen](https://github.com/tpope/vim-pathogen).
 
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-    curl  -Sso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+    curl  -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
 Next, pull this file down and move it to be your `.vimrc`:
 
