@@ -12,19 +12,38 @@ expanded it a bit more.
 First, you'll need to install [pathogen](https://github.com/tpope/vim-pathogen).
 
     mkdir -p ~/.vim/autoload ~/.vim/bundle && \
-    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+    curl  -Sso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
 
-Next, pull this file down and move it to be your `.vimrc` as:
+Next, pull this file down and move it to be your `.vimrc`:
 
-**rc.vim** is a `.vimrc` for you to consider using. Attempst have been made to
-document each line, and may be worth reading through. To install it, move it to `~/.vimrc`
+    curl -Sso ~/.vimrc https://raw.githubusercontent.com/cgswords/vimrc/master/rc.vim
 
+After that you'll need to grab the color schemes, plus some other plugins for
+syntactic niceties.
 
-You probably want to move `dot_vim`'s folders into into `~/.vim/`
+    git clone git@github.com:cgswords/vim-autoclose.git ~/.vim/bundle/vim-autoclose
+    git clone git@github.com:cgswords/vim-colors.git ~/.vim/bundle/vim-colors
+    git clone git@github.com:godlygeek/csapprox.git ~/.vim/bundle/csapprox
+    git clone git@github.com:godlygeek/tabular.git ~/.vim/bundle/tabular
+    git clone git@github.com:plasticboy/vim-markdown.git ~/.vim/bundle/vim-markdown
+    git clone git@github.com:scrooloose/syntastic.git ~/.vim/bundle/syntastic
+    git clone git@github.com:wlangstroth/vim-racket.git ~/.vim/bundle/vim-racket
+
+In order of command, we have:
+  
+- A customization of Townk's AutoClose that doesn't duplicate `\`` or `'` 
+  (because Racket uses these characters for non-strings).
+- A small collection of the color schemes mentioned in the .vimrc
+- CSApprox, which enables full color in terminal vim
+- Tabular, a great auto-alignment library
+- Vim Markdown, syntax highlighting for Markdown files in Vim
+- Syntastic, which reports all sorts of useful syntax errors (though you may
+  want to disable the TeX one)
+- Vim Racket, syntax highlighting for Racket in Vim
 
 There are some other things to note here:
 
-- I've rebound `Ctrl+j` to `Ctrl+e` and `Ctrl+k` to `Ctrl+y`; I find that using
+- I've rebound `Ctrl+e` to `Ctrl+j` and `Ctrl+y` to `Ctrl+k`; I find that using
   control with the standard keys to move up and down pages feels natural.
 - I have rebound `S` to `%`. For the purpose of programming, I find that `%` 
   (which serves as `w/d/l` might, but for a set of paretheses) is far more
@@ -32,39 +51,9 @@ There are some other things to note here:
   keystroke right under my hands.
 - I prefer tabstop of 2 with no expandtab, though there is a small
   exception to this for Makefiles, which is included in the `.vimrc`
-- The files in the `plugin` folder can be moved to `~/.vim/plugin/`, but
-  they are separate since I didn't write them. They are:
-    - `CSApprox` allows for full color support in terminals, for using the
-      color themes included.
-    - `autoclose` types a `)` every time you type a `(` (it also does this for
-      `[` and `{`). The documentation says that `\a` will turn it off, but
-      `paste` mode also suppresses it (and I find is usually what I actually
-      wanted in the first place). Right now I dislike how it handles nested
-      braces, but not enough to hack on it. I may in the future.
 - The `vim_syntax_patch` is from Kent Dybvig, who decided that the standard
   way that Vim indents things was wrong (which is true). It also modifies how
   mark yanking works just a tad. I don't use this patch, but it has some
   serious merit and I would if I were less lazy. The readme is extensive and
   the C code is straight-forward (ha!).
-
-# Lisensing
-
-Redistribution and use in source and binary forms, with or without
-modification, are permitted.
-
-*This software is provided by the regents and contributors ``as is'' and
-any express or implied warranties, including, but not limited to, the
-implied warranties of merchantability and fitness for a particular purpose
-are disclaimed.  In no event shall the regents or contributors be liable
-for any direct, indirect, incidental, special, exemplary, or consequential
-damages (including, but not limited to, procurement of substitute goods
-or services; loss of use, data, or profits; or business interruption)
-however caused and on any theory of liability, whether in contract, strict
-liability, or tort (including negligence or otherwise) arising in any way
-out of the use of this software, even if advised of the possibility of
-such damage.*
-
-This Vim RC is in no way  affiliated with Cadence Research Systems or Racket and
-is developed independently.
-
 
