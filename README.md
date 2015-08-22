@@ -2,16 +2,23 @@
 
 *(By Cameron Swords, with select contributions from Andy Keep and Jaime Guerrero)*
 
-This vimrc is a set of vim bindings for developing Scheme code for 
-[Petite Chez Scheme](http://www.scheme.com/petitechezscheme.html) and
-[Racket](http://racket-lang.org/),
-along with syntax plugins for BBCode (.bbc), Idris, Markdown (.md), and Ott
-(.ott). 
+This vimrc is a set of vim bindings for developing code. It started when I
+was using [Petite Chez Scheme](http://www.scheme.com/petitechezscheme.html) and
+[Racket](http://racket-lang.org/). More recently, I've turned to Pathogen and
+expanded it a bit more.
 
 # Installation
 
+First, you'll need to install [pathogen](https://github.com/tpope/vim-pathogen).
+
+    mkdir -p ~/.vim/autoload ~/.vim/bundle && \
+    curl -LSso ~/.vim/autoload/pathogen.vim https://tpo.pe/pathogen.vim
+
+Next, pull this file down and move it to be your `.vimrc` as:
+
 **rc.vim** is a `.vimrc` for you to consider using. Attempst have been made to
 document each line, and may be worth reading through. To install it, move it to `~/.vimrc`
+
 
 You probably want to move `dot_vim`'s folders into into `~/.vim/`
 
